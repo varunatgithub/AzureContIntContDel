@@ -1,5 +1,6 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
 using System.Reflection;
 
 namespace SeleniumContIntContDel
@@ -10,9 +11,13 @@ namespace SeleniumContIntContDel
         [SetUp]
         public void Setup()
         {
-            var chromeOptions=new ChromeOptions();
+            //Here we are running the tests in headless mode.
+            var chromeOptions = new ChromeOptions();
             chromeOptions.AddArgument("--headless");
-            driver=new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),chromeOptions);
+            driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), chromeOptions);
+
+            //This is for running the test with GUI
+            //driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
         }
         [TearDown]
         public void TearDown()
@@ -24,10 +29,18 @@ namespace SeleniumContIntContDel
         [Test]
         public void Test1()
         {
-            driver.Manage().Window.Maximize();
+            var wait=new WebDriverWait(driver,TimeSpan.FromSeconds(10));
+
+
+
             driver.Navigate().GoToUrl("https://www.google.com");
             driver.FindElement(By.Name("q")).SendKeys("Cheese" + Keys.Enter);
             var pageTitle = "Cheese - Google Search";
+
+            
+
+            wait.Until(driver=> driver.Title == pageTitle);
+
             Assert.AreEqual(pageTitle, driver.Title);
         }
     }
